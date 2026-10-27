@@ -58,7 +58,7 @@
     </div></div>
     <button class="carousel-arrow next" type="button" aria-label="Next projects">&#8250;</button>
   </div>
-  <div class="carousel-dots" aria-label="Choose project slide"><button class="active" aria-label="Go to project 1" data-slide="0"></button><button aria-label="Go to project 2" data-slide="1"></button><button aria-label="Go to project 3" data-slide="2"></button><button aria-label="Go to project 4" data-slide="3"></button><button aria-label="Go to project 5" data-slide="4"></button><button aria-label="Go to project 6" data-slide="5"></button></div>
+  <div class="carousel-dots" aria-label="Choose project position"><button class="active" aria-label="Go to position 1" data-slide="0"></button><button aria-label="Go to position 2" data-slide="1"></button><button aria-label="Go to position 3" data-slide="2"></button><button aria-label="Go to position 4" data-slide="3"></button></div>
 </div></section>
 <div class="project-modal" id="project-modal" hidden><div class="project-modal-backdrop" data-close-modal></div><div class="project-modal-panel" role="dialog" aria-modal="true" aria-labelledby="project-modal-title"><button class="modal-close" type="button" aria-label="Close details" data-close-modal>×</button><div class="section-label">PROJECT DETAILS</div><h2 id="project-modal-title">Project 1</h2><p id="project-modal-description"></p><a id="project-modal-github" class="github-link" href="https://github.com/" target="_blank" rel="noreferrer">◉ &nbsp; View on GitHub ↗</a></div></div>
 <section id="education"><div class="wrap">
@@ -87,17 +87,18 @@ document.getElementById('year').textContent=new Date().getFullYear();
  function visibleCount(){return window.matchMedia('(max-width:600px)').matches?1:(window.matchMedia('(max-width:900px)').matches?2:3)}
  function maxIndex(){return Math.max(0,cards.length-visibleCount())}
  function render(){
-  index=Math.min(index,maxIndex());
+  const max=maxIndex();
+  index=((index% (max+1))+(max+1))%(max+1);
   const gap=parseFloat(getComputedStyle(track).gap)||0;
   const step=cards[0].getBoundingClientRect().width+gap;
   track.style.transform='translateX('+(-index*step)+'px)';
-  dots.forEach((dot,i)=>dot.classList.toggle('active',i===index));
-  prev.disabled=index===0;
-  next.disabled=index===maxIndex();
-  dots.forEach((dot,i)=>{dot.disabled=i>maxIndex()});
+  dots.forEach((dot,i)=>dot.classList.toggle('active',i===Math.min(index,dots.length-1)));
+  prev.disabled=false;
+  next.disabled=false;
+  dots.forEach((dot,i)=>{dot.hidden=i>max;dot.disabled=i>max});
  }
- prev.addEventListener('click',()=>{index=Math.max(0,index-1);render()});
- next.addEventListener('click',()=>{index=Math.min(maxIndex(),index+1);render()});
+ prev.addEventListener('click',()=>{index=index<=0?maxIndex():index-1;render()});
+ next.addEventListener('click',()=>{index=index>=maxIndex()?0:index+1;render()});
  dots.forEach((dot,i)=>dot.addEventListener('click',()=>{index=Math.min(i,maxIndex());render()}));
  window.addEventListener('resize',render);
  const modal=document.getElementById('project-modal');
