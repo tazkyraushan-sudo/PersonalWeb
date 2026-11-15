@@ -50,11 +50,12 @@
 .hero{padding-bottom:36px!important}.hero-links{margin-top:16px!important}#experience{padding-top:24px!important}
 
 
-/* Refined fixed profile + continuous scroll layout */
-html{scroll-behavior:smooth;scroll-padding-top:28px}
-html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
-.site-shell{width:min(1440px,100%);min-height:100vh;height:auto;margin:0 auto;display:grid;grid-template-columns:minmax(300px,33.333%) minmax(0,66.667%);background:#fff}
-.profile-sidebar{height:100vh;min-height:620px;position:sticky;top:0;overflow-y:auto;border-right:1px solid var(--line);padding:42px clamp(28px,4vw,64px);background:#fff;display:flex;flex-direction:column}
+
+/* Fixed sidebar; only the content column scrolls */
+html{height:100%;scroll-behavior:smooth;scroll-padding-top:28px}
+body{height:100%;min-height:100%;margin:0;overflow:hidden}
+.site-shell{width:min(1440px,100%);height:100vh;min-height:0;margin:0 auto;display:grid;grid-template-columns:minmax(300px,33.333%) minmax(0,66.667%);background:#fff;overflow:hidden}
+.profile-sidebar{height:100vh;min-height:0;position:relative;top:auto;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--line);padding:42px clamp(28px,4vw,64px);background:#fff;display:flex;flex-direction:column}
 .sidebar-profile .hero-photo{width:150px;min-height:0;aspect-ratio:1;border-radius:50%;margin:0 0 26px;padding:14px;border-style:solid}
 .sidebar-profile .photo-icon{width:38px;height:38px;font-size:1.1rem}
 .sidebar-profile .photo-note{font-size:.68rem}
@@ -65,9 +66,9 @@ html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
 .sidebar-profile .hero-links{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:20px!important}
 .sidebar-profile .hero-link,.sidebar-profile .hero-location{font-size:.82rem;padding:0;border:0}
 .side-nav{display:flex;flex-direction:column;gap:4px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
-.side-nav-link{display:block;text-align:left;border:0;background:transparent;color:var(--muted);font:600 .9rem "DM Sans",sans-serif;padding:9px 12px;border-radius:6px;text-decoration:none}
+.side-nav-link{display:block;text-align:left;border:0;background:transparent;color:var(--muted);font:600 .9rem "DM Sans",sans-serif;padding:9px 12px;border-radius:6px;text-decoration:none;transition:color .18s ease,background .18s ease}
 .side-nav-link:hover,.side-nav-link.active{color:var(--accent);background:#eef7ff}
-.content-scroll{height:auto;min-height:100vh;overflow:visible;overscroll-behavior:auto;min-width:0}
+.content-scroll{height:100vh;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scroll-behavior:smooth;min-width:0}
 .content-main{width:min(850px,calc(100% - 88px));margin:0 auto;padding:62px 0 36px}
 .content-main section{display:block!important;padding:10px 0 58px;border-bottom:1px solid var(--line);scroll-margin-top:28px}
 .content-main section[hidden],.content-main .view-panel[hidden]{display:block!important}
@@ -75,13 +76,14 @@ html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
 .content-main .section-top h2{font-size:2.45rem}
 .content-main .section-desc{margin:-8px 0 28px}
 .content-main #experience,.content-main #projects,.content-main #education,.content-main #skill,.content-main #development{padding-top:10px!important}
-.content-main #other .other-tabs{display:none}
-.content-main #other .other-panel{display:block!important}
+.content-main #about .section-top,.content-main #experience .section-top,.content-main #projects .section-top,.content-main #education .section-top,.content-main #skill .section-top,.content-main #development .section-top{margin-bottom:24px}
 .content-main .about-copy{font-size:1.02rem;line-height:1.85;color:#555b53;max-width:760px;margin:0}
 .content-main .contact-in-view{padding-top:42px}
 .content-main .footer{width:min(850px,calc(100% - 88px));padding:20px 0 30px}
 @media(max-width:760px){
- .site-shell{min-height:100vh;height:auto;display:block}
+ html{height:auto}
+ body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+ .site-shell{width:100%;height:auto;min-height:100vh;display:block;overflow:visible}
  .profile-sidebar{height:auto;min-height:0;position:relative;overflow:visible;border-right:0;border-bottom:1px solid var(--line);padding:24px 22px 16px}
  .sidebar-profile{display:grid;grid-template-columns:90px minmax(0,1fr);gap:0 18px;align-items:start}
  .sidebar-profile .hero-photo{grid-row:1 / span 4;width:86px;margin:0;aspect-ratio:1}
@@ -165,6 +167,22 @@ html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
 </div>
 </div><script>
 
+
+(function(){
+ const scroller=document.querySelector('.content-scroll');
+ const links=Array.from(document.querySelectorAll('.side-nav-link'));
+ const sections=links.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
+ function activate(id){links.forEach(link=>{const active=link.getAttribute('href')==='#'+id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current')})}
+ links.forEach(link=>link.addEventListener('click',()=>activate(link.getAttribute('href').slice(1))));
+ function updateActive(){
+  if(!scroller||!sections.length)return;
+  const marker=scroller.getBoundingClientRect().top+Math.min(180,scroller.clientHeight*.28);
+  let current=sections[0];
+  sections.forEach(section=>{if(section.getBoundingClientRect().top<=marker+1)current=section});
+  activate(current.id);
+ }
+ if(scroller){scroller.addEventListener('scroll',updateActive,{passive:true});window.addEventListener('resize',updateActive);updateActive()}
+})();
 document.getElementById('year').textContent=new Date().getFullYear();
 document.querySelectorAll('.other-tab').forEach(tab=>{
  tab.addEventListener('click',()=>{
