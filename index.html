@@ -50,9 +50,12 @@
 .hero{padding-bottom:36px!important}.hero-links{margin-top:16px!important}#experience{padding-top:24px!important}
 
 /* Profile sizing refinement */
-.hero-copy h1{font-size:clamp(2.2rem,4.6vw,3.35rem);line-height:1.02;letter-spacing:-.065em}
-.hero-photo{width:100%;max-width:260px;aspect-ratio:4/5;min-height:0;padding:18px}
-@media(max-width:650px){.hero-photo{width:min(210px,65%);max-width:210px;min-height:0}}
+.hero-copy h1{font-size:clamp(2rem,4.1vw,3.1rem);line-height:1.05;letter-spacing:-.065em;white-space:nowrap}
+.hero-photo{width:100%;max-width:240px;aspect-ratio:4/5;min-height:0;padding:18px}
+@media(max-width:650px){
+  .hero-copy h1{font-size:clamp(1.65rem,7.4vw,2.35rem)}
+  .hero-photo{width:min(180px,58%);max-width:180px;min-height:0}
+}
 </style>
 </head>
 <body>
@@ -61,7 +64,7 @@
 <div class="wrap hero" id="home">
   <div class="hero-photo" role="img" aria-label="Photo placeholder; replace with your portrait"><div class="photo-icon" aria-hidden="true">＋</div><div class="photo-title">Your photo here</div><div class="photo-note">Portrait photo space — we can add your actual photo later.</div></div>
   <div class="hero-copy">
-  <h1>Tazki<br><em>Raushan.</em></h1>
+  <h1>Tazki <em>Raushan.</em></h1>
   <div class="role">Academic Operation · BINUS Graduate Program Office, BINUS University</div>
   <p class="intro">I'm Tazki Alamuddin Raushan, working across academic operations, compliance, and program development in higher education. I’m interested in building clear, dependable processes and supporting academic pathways that create meaningful learning opportunities.</p>
   <div class="hero-links" aria-label="Professional links"><a href="#" class="hero-link cv-link">CV ↗</a><a href="https://www.linkedin.com/in/tazki-alamuddin-raushan-404626361/" target="_blank" rel="noreferrer" class="hero-link">LinkedIn ↗</a><a href="mailto:" class="hero-link email-link">Email ↗</a><span class="hero-location"><span aria-hidden="true">⌖</span> West Jakarta</span></div></div>
